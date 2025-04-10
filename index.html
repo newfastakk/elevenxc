@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eLevenX.cc</title>
+    <link rel="icon" href="/Icon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1c2526, #000);
+            color: #fff;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: 'eLevenX';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        .intro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #00ff88, #00b368);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .intro.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .brand-letter {
+            font-size: 140px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(0,255,136,0.5);
+            animation: slideUp 1s ease-out;
+        }
+
+        @keyframes slideUp {
+            0% { transform: translateY(100px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .screen.active {
+            display: flex;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .screen:not(.active) {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        input[type="text"], select {
+            padding: 14px;
+            width: 100%;
+            margin: 10px 0;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
+
+        button {
+            padding: 14px 30px;
+            background: #00ff88;
+            color: #000;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0,255,136,0.5);
+        }
+
+        .photo-upload {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-upload img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .photo-upload input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #fff;
+            color: #000;
+            border-radius: 20px;
+        }
+
+        .product-card {
+            position: relative;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 350px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            filter: blur(2px);
+            border-radius: 15px;
+        }
+
+        .info-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            color: #000;
+            padding: 20px;
+            border-radius: 20px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        video {
+            width: 100%;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Интро -->
+    <div class="intro">
+        <div class="brand-letter">e</div>
+    </div>
+
+    <!-- Поделиться -->
+    <div class="screen share-screen">
+        <div class="card">
+            <p>Для дальнейшего нажмите поделиться, добавить на гл. экран приложение</p>
+            <button onclick="proceedShare()">Продолжить</button>
+        </div>
+    </div>
+
+    <!-- Логин -->
+    <div class="screen signup-screen">
+        <div class="card">
+            <input type="text" id="username" placeholder="Username">
+            <button onclick="signup()">Вход</button>
+        </div>
+    </div>
+
+    <!-- Фото -->
+    <div class="screen photo-screen">
+        <div class="card">
+            <p>Hello dear <span id="user"></span>, now take a photo pic</p>
+            <div class="photo-upload">
+                <img id="preview" src="" alt="Фото">
+                <input type="file" accept="image/*" id="photo" onchange="previewPhoto(event)">
+            </div>
+            <button onclick="finishPhoto()">Готово</button>
+        </div>
+    </div>
+
+    <!-- Главная -->
+    <div class="screen main-screen">
+        <div class="card">
+            <h1>eLevenX</h1>
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('products')">Товары</div>
+                <div class="tab" onclick="showTab('profile')">Profile</div>
+            </div>
+
+            <div id="products" class="tab-content">
+                <div class="product-card">
+                    <img src="cover.jpg" alt="Cover">
+                    <div class="info-btn" onclick="showModal('info-modal')">i</div>
+                    <h2>Standoff 2</h2>
+                    <p>0.33.1</p>
+                    <p>Clumsy external on iOS (beta)</p>
+                    <button onclick="showModal('purchase-modal')">Купить ранний доступ</button>
+                </div>
+            </div>
+
+            <div id="profile" class="tab-content" style="display: none;">
+                <input type="text" id="profile-username" placeholder="Новый ник">
+                <div class="photo-upload">
+                    <img id="profile-preview" src="" alt="Аватар">
+                    <input type="file" accept="image/*" id="avatar" onchange="previewAvatar(event)">
+                </div>
+                <select id="language">
+                    <option value="ru">Русский</option>
+                    <option value="en">English</option>
+                </select>
+                <button onclick="saveProfile()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальные окна -->
+    <div class="modal" id="info-modal">
+        <div class="modal-content">
+            <h3>Информация</h3>
+            <p>Clumsy is in the beta version. We are not responsible for account blocking.</p>
+            <p>TO Lmao, Completely external and it is impossible to ban just like that. Only by appointment.</p>
+            <p>iOS versions that support Clumsy: absolutely all.</p>
+            <video src="/Video.mp4" controls></video>
+            <button onclick="closeModal('info-modal')">Закрыть</button>
+        </div>
+    </div>
+
+    <div class="modal" id="purchase-modal">
+        <div class="modal-content">
+            <h3>Предупреждение</h3>
+            <p>Clumsy is in the beta version. We are not responsible for account blocking.</p>
+            <p>TO Lmao, Completely external and it is impossible to ban just like that. Only by appointment.</p>
+            <p>iOS versions that support Clumsy: absolutely all.</p>
+            <button onclick="window.location.href='t.me/newfastakk'">Хорошо</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = '';
+
+        // Интро
+        setTimeout(() => {
+            document.querySelector('.intro').classList.add('hidden');
+            setTimeout(() => {
+                document.querySelector('.share-screen').classList.add('active');
+            }, 500);
+        }, 1500);
+
+        function proceedShare() {
+            document.querySelector('.share-screen').classList.remove('active');
+            document.querySelector('.signup-screen').classList.add('active');
+        }
+
+        function signup() {
+            currentUser = document.getElementById('username').value;
+            if (currentUser) {
+                document.querySelector('.signup-screen').classList.remove('active');
+                document.querySelector('.photo-screen').classList.add('active');
+                document.getElementById('user').textContent = currentUser;
+            }
+        }
+
+        function previewPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function finishPhoto() {
+            document.querySelector('.photo-screen').classList.remove('active');
+            document.querySelector('.main-screen').classList.add('active');
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            document.querySelector(`.tab[onclick="showTab('${tab}')"]`).classList.add('active');
+            document.getElementById(tab).style.display = 'block';
+        }
+
+        function previewAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveProfile() {
+            const newUsername = document.getElementById('profile-username').value;
+            if (newUsername) currentUser = newUsername;
+            alert('Профиль сохранен!');
+        }
+
+        function showModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+    </script>
+</body>
+</html>
